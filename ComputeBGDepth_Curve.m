@@ -283,7 +283,7 @@ end
 timeSS = toc
 %% Comparing with grasp search computation of final escape depth (Slow!)
 if 0
-    N = 10;
+    N = 30;
     BGs1 = linspace(BGSegEnds(1,1),BGSegEnds(1,2),N);
     BGs2 = linspace(BGSegEnds(2,1),BGSegEnds(2,2),N);
     BGslist = [BGs1;BGs2];
@@ -368,8 +368,8 @@ relative_security3 = depth_imp/mean(BGDepth)
 % n =round(0.5*reso,0);
 % 
 % sinit = BGSeg(:,n);
+if 0
 sinit = BGslist(:,30);
-if 1
 [f1,f2] = PG.get('2pos',sinit(1),sinit(2));
 basepos = [f1,f2];
 sig = norm(f2-f1);
@@ -428,7 +428,7 @@ end
 %% plot the BG and escape grasps together for specific sigma values
 % sigmaval = 6.45;
 % BGSval = interp1(sig,BGslist.',sigmaval);
-if 1
+if 0
 BGSval = BGslist(:,96);
 [BGdepthval,sigval,phival,ppval] = BasketLocalDepth(PG,BGSval);
 [BGdepthval,sigval] = BasketLocalDepthPath(PG,BGSval,[]);
@@ -452,46 +452,46 @@ hold on
 end
 
 %%
-% figure;hold on;
-% plot(1:N,BGdepthlist);
-% plot(1:N,sig);hold off;
-figure;
-hold on
-p1 = plot(sig(1:N),BGdepthlist(1:N),'.k','markersize',10,'DisplayName','Algorithm');
-% plot(sig,phi,'.r','markersize',10);
-p2 = plot(sig(switchlist),BGdepthlist(switchlist),'+r','markersize',10,'DisplayName','Escape-feature change');
-xlabel('$\sigma$','interpreter','latex','fontsize',25)
-ylabel('$\Delta U$','interpreter','latex','fontsize',25)
-title('Basket depth vs. inter-finger distance','interpreter','latex','fontsize',20)
-
-labelflag = 0;
-% for i=1:numel(depthcurves)
-%     depthc = depthcurves{i};
+% % figure;hold on;
+% % plot(1:N,BGdepthlist);
+% % plot(1:N,sig);hold off;
+% figure;
+% hold on
+% p1 = plot(sig(1:N),BGdepthlist(1:N),'.k','markersize',10,'DisplayName','Algorithm');
+% % plot(sig,phi,'.r','markersize',10);
+% p2 = plot(sig(switchlist),BGdepthlist(switchlist),'+r','markersize',10,'DisplayName','Escape-feature change');
+% xlabel('$\sigma$','interpreter','latex','fontsize',25)
+% ylabel('$\Delta U$','interpreter','latex','fontsize',25)
+% title('Basket depth vs. inter-finger distance','interpreter','latex','fontsize',20)
+% 
+% labelflag = 0;
+% % for i=1:numel(depthcurves)
+% %     depthc = depthcurves{i};
+% %     if ~isempty(depthc)
+% %         if labelflag == 0
+% %             p4 = plot(depthc(2,:),depthc(1,:),'b','DisplayName','Analytical depth');
+% %             labelflag = 1;
+% %         else
+% %             plot(depthc(2,:),depthc(1,:),'b')
+% %         end
+% %     end
+% % end
+% labelflag = 0;
+% for i=1:numel(depthcurves2)
+%     depthc = depthcurves2{i};
 %     if ~isempty(depthc)
 %         if labelflag == 0
-%             p4 = plot(depthc(2,:),depthc(1,:),'b','DisplayName','Analytical depth');
+%             p3 = plot(depthc(2,:),depthc(1,:),'g','DisplayName','other feature pairs');
 %             labelflag = 1;
 %         else
-%             plot(depthc(2,:),depthc(1,:),'b')
+%         plot(depthc(2,:),depthc(1,:),'g')
 %         end
 %     end
 % end
-labelflag = 0;
-for i=1:numel(depthcurves2)
-    depthc = depthcurves2{i};
-    if ~isempty(depthc)
-        if labelflag == 0
-            p3 = plot(depthc(2,:),depthc(1,:),'g','DisplayName','other feature pairs');
-            labelflag = 1;
-        else
-        plot(depthc(2,:),depthc(1,:),'g')
-        end
-    end
-end
-% legend([p1,p2,p3,p4])
-legend([p1,p2,p3])
-% legend('Algorithm','Escape-feature change','other feature pairs','Analytical depth')
-hold off
+% % legend([p1,p2,p3,p4])
+% legend([p1,p2,p3])
+% % legend('Algorithm','Escape-feature change','other feature pairs','Analytical depth')
+% hold off
 
 
 

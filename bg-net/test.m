@@ -1,141 +1,115 @@
-% output:
-% U: the highest gravitational energy along the escape path
-% delU: U - U_init, depth
-% pp: ?
-%% Define the polygon
-clearvars
-clc
-type = 6;
-switch type
-    case 0 % pentagon
-        R = [0 1;-1 0];
-        theta = -pi()/2;
-        R = [cos(theta) -sin(theta);sin(theta) cos(theta)];
-        PG = Polygon(R*[3,-4;3,4;-1.5,5;-3,0;-1.5,-5].'+[0;3],[0;3]);
-        subFolderName = 'examples/pentagon'; % where to save results
-%         f2 = [-4.4;1.8];
-%         f1 = [4.4;1.8];
-        f2 = [8.3223;-1.3181];
-        f1 = [0;0];
-        basepos = [f1,f2];
-        res = 50;
-        starting_node = [2,4];
-        res = 50;
-%         starting_node = [2,3];
-    case 1 % cup
-        % PG = Polygon([1,0;2,0;2,3;-1,4;-2,3;-1,1;-0.5,1].',[0;1.5]);
-        % PG = Polygon([-1,-1;2,-1;3,-3;3,3;1,1;0,2;-1,1;-2,3;0.2,3;-2,5;-3,1;-2,-4].',[0;0.5]);
-        PG = Polygon([-3,2;-2,-2;2,-2;1,-0.5;4,1;4,2].'+[0;3],[0;3]);
-       subFolderName = 'examples/cup'; % where to save results
-       f2 = [2;4];
-       f1 = [-2.5;2.8];
-       basepos = [f1,f2];
-       res = 50;
-       starting_node = [2,6];
-%     case 2 % bottle
-%         load object5.mat
-%         %     object = [object(:,7:8) object(:,1:6)];
-% %         com = [0.045,0.07].';
-% %         object = object + 0.001*randn(size(object));
-%         PG = Polygon(object,com);
-%         subFolderName = 'Examples for research proposal\Bottle'; % where to save results
-%         f2 = [0.06;0.01];
-%         f1 = [0;0];
-%         basepos = [f1,f2];
-%         res = 1500;
-%         starting_node = [2,21];
-    case 3 % Elon
-        load objectHiRes1.mat
-        %     object = [object(:,7:8) object(:,1:6)];
-%         com = [0.045,0.07].';
-        PG = Polygon(Round_object,com);
-        subFolderName = 'examples/shan'; % where to save results
-    case 4 % Crown
-        object = [-2,-1;2,-1;3,3;1,0;0,1;-1,0;-4,1].'; % vertices coordinates
-        com = [0,0].';
-        PG = Polygon(object,com);
-        subFolderName = 'examples/crown'; % where to save results
-        f2rel = [2.7519;2.0074]; % finger 2 pos in coordinate
-        f1rel = [-2.8470;-0.1530]; % finger 1
-        f1 = [0;0];
-        f2 = f2rel-f1rel; % relative pos to f1
-        res = 20;
-        starting_node = [2,4];    
-%     case 5 % new bottle
-%         load NewBottle.mat
-%         %     object = [object(:,7:8) object(:,1:6)];
-% %         com = [0.045,0.07].';
-% %         object = object + 0.001*randn(size(object));
-% %         theta =  1.515;
-% %         R = [cos(theta) sin(theta);-sin(theta) cos(theta)];
-% %         object = R*object;
-%         com(2) = max(object(2,:))-com(2);
-%         object(2,:) = max(object(2,:))-object(2,:);
-%         object(2,1) = 0;
-%         object = round(object./20,1);
-%         com = round(com./20,0);
-%         PG = Polygon(object,com);
-%         subFolderName = 'Examples for research proposal\Bottle'; % where to save results
-%         f2 = [4;2];
-%         f1 = [0;0];
-%         basepos = [f1,f2];
-%         res = 50;
-%         starting_node = [2,24];
-    case 6 % Gun
-%         load gun2.mat
-%         object = Round_object;
-%         object = 0.8*[1,10;26,10;21,1;29,9;31,2;28,0;32,0;32,12;35,16;32,18;33,16;32,14;31,14;31,16;1,16;0.5,13.5;0,13;0.5,12.5].';
-        
-        object = 0.8*[1,10;26,10;21,1;29,9;32,0;32,12;36,12;40,8;41,9;35,14;31,16;1,16].';%32,14;31,14
-        com = 0.8*[27;10];
-        theta =  0.423;
-        R = [cos(theta) -sin(theta);sin(theta) cos(theta)];
-         object = R*object;
-         com = R*com;
-%          object = round(object./20,1);
-%          com = round(com./20,0);
-        PG = Polygon(object,com);
-        subFolderName = 'examples/gun'; % where to save results
-        f2 = [18.2;16.09];
-        f1 = [11.4;13.9];
-        basepos = [f1,f2];
-        res = 30;
-        starting_node = [2,6];
+clear all
+close all
+res = 50; % resolution
+
+%% Plot a new polygon
+% load object.mat
+% object = [object(:,7:8) object(:,1:6)];
+% object = [object(:,1:3) [-0.15;0.23] [-0.1;0.21] object(:,4:8)];
+% PG = Polygon(object,0*com);
+% polyDrawing = PG.drawPolygon();
+
+i=1;
+texthandle = [];
+flag = true;
+figure
+grid on
+hold on
+% imshow([pwd '\Examples for research proposal\Gun\snip.png'])
+hold on
+set(gca,'visible',1)
+% xlim = get(gca,'xlim');
+% ylim = get(gca,'ylim');
+axis([-5 5 -5 5])
+xv = [min(xlim),min(xlim)+diff(xlim)/10,min(xlim)+diff(xlim)/10,min(xlim)];
+yv = [min(ylim),min(ylim),min(ylim)+diff(ylim)/10,min(ylim)+diff(ylim)/10];
+pos = [xv(1),yv(1),max(xv)-min(xv),max(yv)-min(yv)];
+rectangle('Position',pos,'faceColor',[1 1 0 0.2])
+texthandle = text(mean(xv),mean(yv),'complete')
+
+
+while flag
+%     if ~isempty(texthandle)
+%         delete(texthandle);
+%     end
+%     texthandle = text(0,5,num2str(i));
+    [object_x(i),object_y(i)] = ginput(1);
+    
+    if inpolygon(object_x(i),object_y(i),xv,yv)
+        flag = false;
+        object_x(end) = [];
+        object_y(end) = [];
+        break;
+    end
+    plot(object_x(i),object_y(i),'.k');
+    if i>1
+      plot(object_x(i-1:i),object_y(i-1:i),'k'); 
+    end
+
+    i = i+1;
+end
+plot([object_x(1),object_x(end)],[object_y(1),object_y(end)],'k'); 
+delete(texthandle);
+texthandle = text(0,5,'center of mass');
+[com(1),com(2)] = ginput(1);
+% plot(com(1),com(2),'*r');
+
+object = [object_x;object_y]
+com = com.'
+
+%%
+Round_object = round(object,2);
+% com(2) = max(Round_object(2,:))-com(2);
+% Round_object(2,:) = (max(Round_object(2,:))-Round_object(2,:));
+figure
+hold on
+plot(Round_object(1,:),Round_object(2,:))
+plot(com(1),com(2),'+')
+axis equal
+
+%%
+save('objectHiRes1.mat','Round_object','com')
+
+%% Find equilibrium grasps
+tic
+PG = Polygon(Round_object,com);
+subFolderName = 'examples/shan'; % where to save results
+[PG,S,X,VL] = PG.findBdyVariable(res);
+
+[s1,s2,~] = PG.Eqcheck();
+EqCurves = PG.EqCurveFinder();
+for i=1:numel(EqCurves)
+    curve = EqCurves{i};
+    s1 = [s1, linspace(curve(1,1),curve(1,2),res)];
+    s2 = [s2, linspace(curve(2,1),curve(2,2),res)];
+    s1 = [s1, linspace(curve(2,1),curve(2,2),res)];
+    s2 = [s2, linspace(curve(1,1),curve(1,2),res)];
 end
 
-% draw the polygon (only once)
-% if ~exist('polyDrawing','var')
-%     polyDrawing = cell(0);
-% end
-% if isempty(polyDrawing)||~isgraphics(polyDrawing)
-    polyDrawing = PG.drawPolygon();
-% end
-%%
-% Find equilibrium grasps
+% Check grasps for minimum/maximum (basket grasp/non BG)
+[BG,NBG] = PG.StatusSeparate(s1,s2,X); % basket grasp / non basket grasp
+timeSynesthise = toc
 
-% [PG,S,X,THL,CVL,~] = PG.findBdyVariable3(res);
-[PG,S,X] = PG.findBdyVariable(res);
 
+%% Analysis of one BG in the BG sets
+n = 1;
+theta = 0;
+ss1 = BG(1, n); % (ss1, ss2) is one BG
+ss2 = BG(2, n);
+f1rel = PG.get('1Pos',ss1);
+f2rel = PG.get('1Pos',ss2);
+R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
+f1 = [0;0];
+f2 = f1 + R*(f2rel-f1rel);
+basepos = [f1,f2];
+
+
+
+%% rest of evaluation of single BG depth
 % identify nodes, create double-support contours
 Sigma=inter_finger_distance(X,X);
-if type == 4
-    s1 = 19.24;
-    s2 = 7.242;
-    theta = 0;
-    
-    f1 = [0;0];
-    f1rel = PG.get('1Pos',s1);
-    f2rel = PG.get('1Pos',s2);
-    axle = f1;
-    d = f1-f1rel;
-    R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
-    f2 = f1 + R*(f2rel-f1rel);
-    basepos = [f1,f2];
-end
-   
 sig = norm(f2-f1);
 [cont_original] = PG.GetSigmaContours(Sigma,sig);
-
 
 cont = PG.CleanContour(cont_original,basepos);
 

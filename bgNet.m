@@ -103,7 +103,7 @@ f2rel = PG.get('1Pos',ss2);
 R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
 f1 = [0;0];
 f2 = f1 + R*(f2rel-f1rel);
-% f1 = [11.4;13.9];
+% f1 = [11.4;13.9]; % gun
 % f2 = [18.2;16.09];
 basepos = [f1,f2];
 
@@ -136,6 +136,7 @@ starting_node = [2,find(distToBG == min(distToBG),1,'first')];
 nodes = check_SS_for_DS(PG,nodes,f1,100*(f2-f1)); %function checks SS_nodes for penetration (of the other finger),
 % each node appears once for each finger it is relevant for, with the relevant finger index at the end 
 % save([pwd '/' subFolderName '/PreGraph.mat'],'PG','nodes','cont','starting_node','f1','f2');
+
 %% draw the contact space
 loadfromfile = 0;
 if loadfromfile == 1

@@ -88,7 +88,7 @@ switch type
         
         object = 0.8*[1,10;26,10;21,1;29,9;32,0;32,12;36,12;40,8;41,9;35,14;31,16;1,16].';%32,14;31,14
         com = 0.8*[27;10];
-        theta =  0.423;
+        theta =  0.;
         R = [cos(theta) -sin(theta);sin(theta) cos(theta)];
          object = R*object;
          com = R*com;

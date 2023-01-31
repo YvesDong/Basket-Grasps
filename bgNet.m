@@ -1,9 +1,9 @@
 clear all
 close all
-res = 50; % resolution
-
+res = 30; % resolution
+% starting_node = [2,12]; % TODO: ??? (all cases work with diff 2nd no.)
 %% Plot a new polygon
-% load object.mat
+% load test.mat
 % object = [object(:,7:8) object(:,1:6)];
 % object = [object(:,1:3) [-0.15;0.23] [-0.1;0.21] object(:,4:8)];
 % PG = Polygon(object,0*com);
@@ -53,26 +53,30 @@ texthandle = text(0,5,'center of mass');
 [com(1),com(2)] = ginput(1);
 % plot(com(1),com(2),'*r');
 
-object = [object_x;object_y]
-com = com.'
+object = [object_x;object_y];
+com = com.';
+
+% gun
+% object = 0.8*[1,10;26,10;21,1;29,9;32,0;32,12;36,12;40,8;41,9;35,14;31,16;1,16].';%32,14;31,14
+% com = 0.8*[27;10];
 
 %%
-Round_object = round(object,2);
-% com(2) = max(Round_object(2,:))-com(2);
-% Round_object(2,:) = (max(Round_object(2,:))-Round_object(2,:));
-figure
-hold on
-plot(Round_object(1,:),Round_object(2,:))
-plot(com(1),com(2),'+')
-axis equal
+% Round_object = round(object,2);
+% % com(2) = max(Round_object(2,:))-com(2);
+% % Round_object(2,:) = (max(Round_object(2,:))-Round_object(2,:));
+% figure
+% hold on
+% plot(Round_object(1,:),Round_object(2,:))
+% plot(com(1),com(2),'+')
+% axis equal
 
-save('objectHiRes1.mat','Round_object','com')
+save('test.mat','object','com')
 
-%% Find equilibrium grasps
-tic
-PG = Polygon(Round_object,com);
-subFolderName = 'examples/shan'; % where to save results
-[PG,S,X,VL] = PG.findBdyVariable(res);
+% %% Find equilibrium grasps
+% tic
+PG = Polygon(object,com);
+subFolderName = 'examples/test'; % where to save results
+[PG,~,X] = PG.findBdyVariable(res);
 
 [s1,s2,~] = PG.Eqcheck();
 EqCurves = PG.EqCurveFinder();
@@ -86,7 +90,7 @@ end
 
 % Check grasps for minimum/maximum (basket grasp/non BG)
 [BG,NBG] = PG.StatusSeparate(s1,s2,X); % basket grasp / non basket grasp
-timeSynesthise = toc
+timeSynesthise = toc;
 
 
 %% Analysis of one BG in the BG sets
@@ -99,16 +103,19 @@ f2rel = PG.get('1Pos',ss2);
 R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
 f1 = [0;0];
 f2 = f1 + R*(f2rel-f1rel);
+% f1 = [11.4;13.9];
+% f2 = [18.2;16.09];
 basepos = [f1,f2];
 
+%%
+% Find equilibrium grasps
+% [PG,S,X,THL,CVL,~] = PG.findBdyVariable3(res);
+% [PG,S,X] = PG.findBdyVariable(res);
 
-
-%% rest of evaluation of single BG depth
 % identify nodes, create double-support contours
-Sigma = inter_finger_distance(X,X);
+Sigma=inter_finger_distance(X,X);
 sig = norm(f2-f1);
 [cont_original] = PG.GetSigmaContours(Sigma,sig);
-
 cont = PG.CleanContour(cont_original,basepos);
 
 [ds_max,ds_min,ds_virtual] = PG.DSNodes(cont);
@@ -120,12 +127,15 @@ nodes{4} = ss_max;
 nodes{5} = ss_min;
 nodes{6} = ss_saddle;
 
+BGS = [ss1;ss2];
+diffToBG = ds_min(:,1:2)-BGS.';
+diffToBG2 = diffToBG.^2;
+distToBG = diffToBG2(:,1)+diffToBG2(:,2);
+starting_node = [2,find(distToBG == min(distToBG),1,'first')];
+
 nodes = check_SS_for_DS(PG,nodes,f1,100*(f2-f1)); %function checks SS_nodes for penetration (of the other finger),
 % each node appears once for each finger it is relevant for, with the relevant finger index at the end 
 % save([pwd '/' subFolderName '/PreGraph.mat'],'PG','nodes','cont','starting_node','f1','f2');
-
-starting_node = [2,4]; % [node_type,Node_index]
-
 %% draw the contact space
 loadfromfile = 0;
 if loadfromfile == 1

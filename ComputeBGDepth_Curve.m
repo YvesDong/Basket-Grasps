@@ -1,9 +1,10 @@
-clearvars
+clearvars;
+close all;
 %% Define the polygon
 % %% Define the polygon
 clc
 
-object = 11;
+object = 1;
 symmetry = 0;
 switch object
     case 0 % pentagon
@@ -129,8 +130,8 @@ switch object
         res = 50;
 end
 
-polyDrawing = PG.drawPolygon();
-hold off
+% polyDrawing = PG.drawPolygon();
+% hold off
 %% Find equilibrium grasps
 tic
 [PG,S,X,VL] = PG.findBdyVariable(res);
@@ -186,8 +187,8 @@ end
 
 if ~exist('BGSegEnds','var')
 % Identify segment of basket grasps by pointing at end points:
-e1 = ginput(1)
-e2 = ginput(1)
+e1 = ginput(1); drawnow;
+e2 = ginput(1); drawnow;
 distfrome1 = (BG(1,:)-e1(1)).^2+(BG(2,:)-e1(2)).^2;
 inde1 = find(distfrome1==min(distfrome1),1,'first');
 distfrome2 = (BG(1,:)-e2(1)).^2+(BG(2,:)-e2(2)).^2;
